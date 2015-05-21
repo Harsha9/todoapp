@@ -1,32 +1,24 @@
-# Define roles, user and IP address of deployment server
-# role :name, %{[user]@[IP adde.]}
-role :app, %w{deployer@10.18.83.137}
-role :web, %w{deployer@10.18.83.137}
-role :db, %w{deployer@10.18.83.137}
+set :stage, :production
+set :branch, "master"
 
-# Define server(s)
-server '10.18.83.137', user: 'deployer', role: %w{app}
-server '10.18.83.137', user: 'deployer', role: %w{db}
-server '10.18.83.137', user: 'deployer', role: %w{web}
-# SSH Options
-# See the example commented out section in the file
-# for more options.
+# used in case we're deploying multiple versions of the same
+# app side by side. Also provides quick sanity checks when looking
+# at filepaths
+set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
+set :server_name, "10.18.83.134"
 
-set :ssh_options, {
-	
-    forward_agent: false,
-    keys: %w(/home/knome/.ssh/id_rsa),
-    auth_methods: %w(password),
-    password: 'password',
-    user: 'deployer'
-}
-set :deploy_to, "/home/deployer/apps/smpl"
-before "deploy:restart", "fix:permission"
+server '#{server_name}', user: 'deployer', roles: %w{web app db}, primary: true
 
-namespace :fix do
-  task :permission do
-  	on  roles(:app) do
-    run  "chown -R deploy:deploy #{deploy_to}"
-  	end
-  end
-end
+set :deploy_to, "/home/#{fetch(:deploy_user)}/apps/#{fetch(:full_app_name)}"
+
+# dont try and infer something as important as environment from
+# stage name.
+set :rails_env, :production
+
+# number of unicorn workers, this will be reflected in
+# the unicorn.rb and the monit configs
+set :unicorn_worker_count, 5
+
+# whether we're using ssl or not, used for building nginx
+# config file
+set :enable_ssl, false

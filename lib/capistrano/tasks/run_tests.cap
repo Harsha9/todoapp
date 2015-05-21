@@ -1,0 +1,3 @@
+# what specs should be run before deployment is allowed to
+# continue, see lib/capistrano/tasks/run_tests.cap
+set :tests, []

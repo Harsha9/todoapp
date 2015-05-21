@@ -36,9 +36,9 @@ set :to_symlink,
 #     end
 #   end
  desc 'Restart application'
-  task :restart do
+  task :start do
     on roles(:app), in: :sequence, wait: 5 do
-      execute "service thin restart"  ## -> line you should add
+      execute "service thin start"  ## -> line you should add
     end
   end
 
