@@ -4,12 +4,12 @@ set :branch, "master"
 # used in case we're deploying multiple versions of the same
 # app side by side. Also provides quick sanity checks when looking
 # at filepaths
-set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
+set :full_app_name, "todoapp"
 set :server_name, "10.18.83.134"
 
-server '#{server_name}', user: 'deployer', roles: %w{web app db}, primary: true
+server '10.18.83.134', user: 'deployer', roles: %w{web app db}, primary: true
 
-set :deploy_to, "/home/#{fetch(:deploy_user)}/apps/#{fetch(:full_app_name)}"
+set :deploy_to, "/home/deployer/apps/todoapp"
 
 # dont try and infer something as important as environment from
 # stage name.
